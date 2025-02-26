@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(morgan("dev"))
+app.use(morgan("dev"));
 
 const PORT = process.env.PORT || 8000;
 
@@ -24,7 +24,6 @@ app.get("/", (req, res) => {
 // Auth Route
 app.use("/api/v1", authRoute);
 
-
 // connect to database
 const connection = async () => {
   try {
@@ -34,7 +33,7 @@ const connection = async () => {
     console.log(error);
   }
 };
-connection()
+connection();
 
 // listen to the server
 app.listen(PORT, () => {

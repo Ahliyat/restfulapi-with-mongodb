@@ -32,6 +32,7 @@ export const loginUser = async (req, res) => {
     const { email } = req.body;
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "User does not exist" });
+    console.log(user);
 
     const checkIsPasswordMatch = await bcrypt.compare(
       req.body.password,
@@ -64,7 +65,11 @@ export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
     // delete users.password;
-    res.status(200).json(users);
+    const getUsers = users.map((user) => {
+      const { password, ...otherUserInfo } = user._doc;
+      return otherUserInfo;
+    });
+    res.status(200).json(getUsers);
   } catch (error) {
     res.status(404).json({
       error: error.message,
@@ -77,10 +82,8 @@ export const getUser = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await User.findById(id);
-    delete user.password;
-    // const { password, ...userIfo } = user._doc;
-    // console.log(user);
-    res.status(200).json(user);
+    const { password, ...userInfo } = user._doc;
+    res.status(200).json(userInfo);
   } catch (error) {
     res.status(404).json({
       error: error.message,
@@ -91,12 +94,14 @@ export const getUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { firstname, lastname, email } = req.body;
-    const updateUserData = await User.findByIdAndDelete(
+    // const { firstname, lastname, email } = req.body;
+    const updateUserData = await User.findByIdAndUpdate(
       id,
-      firstname,
-      lastname,
-      email,
+      // { firstname, lastname, email },
+      {
+        // set all that are in req.body
+        $set: req.body,
+      },
       {
         new: true,
       }
