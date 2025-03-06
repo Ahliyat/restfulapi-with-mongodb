@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import authRoute from "./routes/auth.js";
 import morgan from "morgan";
+import cors from "cors"
 
 // Load env variables
 // dotenv.config({ path: './config/config.env' });
@@ -11,7 +12,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cors())
 app.use(morgan("dev"));
 
 const PORT = process.env.PORT || 8000;
